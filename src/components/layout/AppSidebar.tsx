@@ -90,20 +90,7 @@ export function AppSidebar() {
         </Button>
       </div>
 
-      {/* Settings */}
-      <div className="p-2 border-t-2 border-border">
-        <Link
-          to="/settings"
-          className={cn(
-            'flex items-center gap-3 px-3 py-2.5 font-medium transition-all border-2 border-transparent hover:bg-accent hover:border-border',
-            location.pathname === '/settings' &&
-              'bg-foreground text-background border-foreground'
-          )}
-        >
-          <Settings className="w-5 h-5 shrink-0" />
-          {!collapsed && <span>Settings</span>}
-        </Link>
-      </div>
+            
     </aside>
   );
 }
