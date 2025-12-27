@@ -11,31 +11,55 @@ import EquipmentDetail from "@/pages/EquipmentDetail";
 import Teams from "@/pages/Teams";
 import Requests from "@/pages/Requests";
 import Calendar from "@/pages/Calendar";
+import Login from "@/pages/Login";
+import SignUp from "@/pages/SignUp";
 import NotFound from "./pages/NotFound";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" />;
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <DataProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppLayout>
+    <AuthProvider>
+      <TooltipProvider>
+        <DataProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/equipment" element={<Equipment />} />
-              <Route path="/equipment/:id" element={<EquipmentDetail />} />
-              <Route path="/teams" element={<Teams />} />
-              <Route path="/requests" element={<Requests />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="*" element={<NotFound />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+
+              <Route
+                path="/*"
+                element={
+                  <ProtectedRoute>
+                    <AppLayout>
+                      <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/equipment" element={<Equipment />} />
+                        <Route path="/equipment/:id" element={<EquipmentDetail />} />
+                        <Route path="/teams" element={<Teams />} />
+                        <Route path="/requests" element={<Requests />} />
+                        <Route path="/calendar" element={<Calendar />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </AppLayout>
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
-          </AppLayout>
-        </BrowserRouter>
-      </DataProvider>
-    </TooltipProvider>
+          </BrowserRouter>
+        </DataProvider>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

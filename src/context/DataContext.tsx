@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Team, TeamMember, Equipment, MaintenanceRequest } from '@/types';
 import { mockTeams, mockTeamMembers, mockEquipment, mockRequests } from '@/data/mockData';
 
@@ -28,10 +28,43 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export function DataProvider({ children }: { children: ReactNode }) {
-  const [teams, setTeams] = useState<Team[]>(mockTeams);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(mockTeamMembers);
-  const [equipment, setEquipment] = useState<Equipment[]>(mockEquipment);
-  const [requests, setRequests] = useState<MaintenanceRequest[]>(mockRequests);
+  // Initialize state from localStorage or use mock data
+  const [teams, setTeams] = useState<Team[]>(() => {
+    const stored = localStorage.getItem('teams');
+    return stored ? JSON.parse(stored) : mockTeams;
+  });
+
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => {
+    const stored = localStorage.getItem('teamMembers');
+    return stored ? JSON.parse(stored) : mockTeamMembers;
+  });
+
+  const [equipment, setEquipment] = useState<Equipment[]>(() => {
+    const stored = localStorage.getItem('equipment');
+    return stored ? JSON.parse(stored) : mockEquipment;
+  });
+
+  const [requests, setRequests] = useState<MaintenanceRequest[]>(() => {
+    const stored = localStorage.getItem('requests');
+    return stored ? JSON.parse(stored) : mockRequests;
+  });
+
+  // Persist state changes to localStorage
+  useEffect(() => {
+    localStorage.setItem('teams', JSON.stringify(teams));
+  }, [teams]);
+
+  useEffect(() => {
+    localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
+  }, [teamMembers]);
+
+  useEffect(() => {
+    localStorage.setItem('equipment', JSON.stringify(equipment));
+  }, [equipment]);
+
+  useEffect(() => {
+    localStorage.setItem('requests', JSON.stringify(requests));
+  }, [requests]);
 
   const addEquipment = (eq: Equipment) => {
     setEquipment((prev) => [...prev, eq]);
